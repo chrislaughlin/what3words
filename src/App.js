@@ -21,8 +21,25 @@ const Square = styled.p`
     padding: 20% 0%;
 `;
 
+const Geo = styled.p`
+    font-size: 2vmin;
+    color: gray;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+`;
+
+const WhatLink = styled.a`
+    font-size: 2vmin;
+    color: gray;
+    color: #137dc1;
+    text-decoration: none;
+    margin-top: 20px;
+`;
+
 function App() {
     const [words, setWords] = useState('Getting Location...');
+    const [geo, setGeo] = useState(null);
 
     useEffect(() => {
       if (!navigator.geolocation) {
@@ -32,8 +49,14 @@ function App() {
               pos => {
                   setWords('Getting Location...');
                   get3Words(pos.coords.latitude, pos.coords.longitude)
-                      .then(data => setWords(data.currentLocation.words))
-                      .catch(() => setWords('Failed to get 3 words'));
+                      .then(data => {
+                          setWords(data.currentLocation.words)
+                          setGeo({latitude: pos.coords.latitude, longitude: pos.coords.longitude})
+                      })
+                      .catch(() => {
+                          setWords('Failed to get 3 words')
+                          setGeo(null)
+                      });
 
               },
               () => setWords('Geolocation is needed to get your 3 words')
@@ -46,6 +69,18 @@ function App() {
             <Square>
               {words}
             </Square>
+            <Geo>
+                {
+                    geo && <span>{`latitude: ${geo.latitude} | longitude: ${geo.longitude}`}</span>
+                }
+                <WhatLink
+                    href="https://what3words.com/"
+                    target="_blank"
+                >
+                    What 3 Words
+                </WhatLink>
+            </Geo>
+
         </div>
     );
 }
