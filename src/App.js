@@ -28,13 +28,15 @@ function App() {
       if (!navigator.geolocation) {
         setWords('Geolocation is not supported by your browser');
       } else {
-          navigator.geolocation.getCurrentPosition(
+          navigator.geolocation.watchPosition(
               pos => {
+                  setWords('Getting Location...');
                   get3Words(pos.coords.latitude, pos.coords.longitude)
-                      .then(data => setWords(data.currentLocation.words));
+                      .then(data => setWords(data.currentLocation.words))
+                      .catch(() => setWords('Failed to get 3 words'));
 
               },
-              error => setWords('Geolocation is needed to get your 3 words')
+              () => setWords('Geolocation is needed to get your 3 words')
           );
       }
     }, [])
